@@ -12,12 +12,26 @@ defmodule GeoLocationWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug(OpenApiSpex.Plug.PutApiSpec, module: GeoLocation.ApiSpec)
   end
 
-  scope "/", GeoLocationWeb do
-    pipe_through :browser
+  pipeline :openapi do
+    plug OpenApiSpex.Plug.PutApiSpec, module: GeoLocation.ApiSpec
+  end
 
-    get "/", PageController, :home
+  scope "/api", GeoLocationWeb do
+    pipe_through :api
+
+    get "/:ip", GeoLocationController, :get_by_ip
+  end
+
+  scope "/" do
+    scope "/openapi" do
+      pipe_through :openapi
+      get "/", OpenApiSpex.Plug.RenderSpec, []
+    end
+
+    get "/doc", OpenApiSpex.Plug.SwaggerUI, path: "/openapi"
   end
 
   # Other scopes may use custom stacks.

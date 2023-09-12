@@ -51,7 +51,10 @@ defmodule GeoLocation.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:flow, "~> 1.2"},
-      {:nimble_csv, "~> 1.2"}
+      {:nimble_csv, "~> 1.2"},
+      {:open_api_spex, "3.11.0"},
+      {:mox, "~> 1.0.2", only: [:test]},
+        {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end
 

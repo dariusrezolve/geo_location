@@ -7,23 +7,22 @@ defmodule GeoLocation.Storage.GeoLocation do
           country: String.t(),
           country_code: String.t(),
           ip: String.t(),
-          latitude: Decimal.t(),
-          longitude: Float.t(),
-          mystery_value: Float.t(),
+          latitude: String.t(),
+          longitude: String.t(),
+          mystery_value: String.t(),
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
         }
 
-  @fields ~w(id city country country_code ip latitude longitude mystery_value inserted_at updated_at)a
+  @fields ~w(city country country_code ip latitude longitude mystery_value inserted_at updated_at)a
 
-  @primary_key {:id, Ecto.UUID, autogenerate: true}
   schema "geo_location" do
     field :city, :string
     field :country, :string
     field :country_code, :string
     field :ip, :string
-    field :latitude, :decimal
-    field :longitude, :decimal
+    field :latitude, :string
+    field :longitude, :string
     field :mystery_value, :string
 
     timestamps()
@@ -32,6 +31,6 @@ defmodule GeoLocation.Storage.GeoLocation do
   def changeset(geo_location, attrs) do
     geo_location
     |> cast(attrs, @fields)
-    |> validate_required(@fields -- [:id, :inserted_at, :updated_at])
+    |> validate_required(@fields -- [:inserted_at, :updated_at])
   end
 end

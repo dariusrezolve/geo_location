@@ -23,7 +23,7 @@ erl_crash.dump
 /tmp/
 
 # Ignore package tarball (built via "mix hex.build").
-geo_location-*.tar
+points_app-*.tar
 
 # Ignore assets that are produced by build tools.
 /priv/static/assets/
@@ -35,3 +35,7 @@ geo_location-*.tar
 npm-debug.log
 /assets/node_modules/
 
+lib/points_app/.DS_Store
+lib/.DS_Store
+
+/data

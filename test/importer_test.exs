@@ -1,6 +1,7 @@
 defmodule GeoLocation.ImporterTest do
   use GeoLocation.DataCase
   alias GeoLocation.Importer
+  alias GeoLocation.Storage
 
   def import() do
     data_dump_csv()
@@ -9,24 +10,17 @@ defmodule GeoLocation.ImporterTest do
   end
 
   test "imports all lines and filters out invalid data" do
-    # :timer.tc(&import/0) |> IO.inspect(label: "import_real")
-    # add better test here
-    [invalid: invalid, valid: valid] = import()
-    valid |> IO.inspect(label: "valid")
-    invalid |> IO.inspect(label: "invalid")
-    assert invalid |> Enum.count() == 2
+    %{result: %{invalid: invalid, valid: valid}} = import()
+    assert invalid.count == 2
+    assert valid.count == 16
   end
 
-  # for duplicates, we will need to add a unique constraint to the database and rely on that
-  # this is because we will need to check uniquenes between several file imports anyway
   test "imports all lines and filters out duplicates" do
-    # :timer.tc(&import/0) |> IO.inspect(label: "import_real")
-    result = import() |> IO.inspect(label: "import_real")
-    %{invalid_rows: invalid_rows, valid_rows: valid_rows} = import()
-    invalid_rows |> IO.inspect(label: "invalid_rows")
-    valid_rows |> IO.inspect(label: "valid_rows")
+    import()
 
-    assert valid_rows |> Enum.count() == 14
+    result = Storage.get_by_ip("200.106.141.15")
+
+    assert result |> Enum.count() == 1
   end
 
   defp data_dump_csv(), do: "test/fixtures/data_dump_test.csv"

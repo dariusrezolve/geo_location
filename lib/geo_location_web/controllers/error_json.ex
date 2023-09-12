@@ -1,4 +1,4 @@
-defmodule GeoLocationWeb.ErrorJSON do
+defmodule GeoLocationWeb.GeoLocationJSON do
   # If you want to customize a particular status code,
   # you may add your own clauses, such as:
   #

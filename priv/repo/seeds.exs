@@ -1,11 +1,12 @@
-# Script for populating the database. You can run it as:
-#
-#     mix run priv/repo/seeds.exs
-#
-# Inside the script, you can read and write to any of your
-# repositories directly:
-#
-#     GeoLocation.Repo.insert!(%GeoLocation.SomeSchema{})
-#
-# We recommend using the bang functions (`insert!`, `update!`
-# and so on) as they will fail if something goes wrong.
+alias GeoLocation.Importer
+
+{time, _} =
+  :timer.tc(fn ->
+    "priv/data_dump.csv"
+    |> File.stream!(read_ahead: 50_000)
+    |> Importer.import()
+
+    :ok
+  end)
+
+(time / 1000) |> IO.inspect(label: "ms")
