@@ -23,5 +23,16 @@ defmodule GeoLocation.ImporterTest do
     assert result |> Enum.count() == 1
   end
 
+  test "returns an error on malformed CVS file" do
+    %{result: %{invalid: invalid, valid: valid}}
+
+    "test/fixtures/data_dump_test_malformed.csv"
+    |> File.stream!(read_ahead: 50_000)
+    |> Importer.import()
+
+    assert invalid.count == 2
+    assert valid.count == 16
+  end
+
   defp data_dump_csv(), do: "test/fixtures/data_dump_test.csv"
 end

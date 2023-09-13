@@ -43,7 +43,7 @@ defmodule GeoLocationWeb.GeoLocationController do
   end
 
   def get_by_ip(conn, params) do
-    # do addtional validation here if needed
+    # do addtional validation here if needed or as a plug
     case Map.get(params, :ip) |> Validator.validate(:ip) do
       {:ok, ip} ->
         case Storage.get_by_ip(ip) do

@@ -1,6 +1,6 @@
 alias GeoLocation.Importer
 
-{time, _} =
+{time, result} =
   :timer.tc(fn ->
     "priv/data_dump.csv"
     |> File.stream!(read_ahead: 50_000)
@@ -9,4 +9,5 @@ alias GeoLocation.Importer
     :ok
   end)
 
-(time / 1000) |> IO.inspect(label: "ms")
+(time / 1000) |> IO.inspect(label: "Elapsed time (ms)")
+result |> IO.inspect(label: "Result")
