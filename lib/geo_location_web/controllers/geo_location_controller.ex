@@ -1,9 +1,13 @@
 defmodule GeoLocationWeb.GeoLocationController do
   use GeoLocationWeb, :controller
+
+  alias Plug.Conn
   alias OpenApiSpex.{Operation, Schema}
   alias GeoLocation.StorageApi, as: Storage
-  alias GeoLocationWeb.Controllers.Schemas.{GeoLocation, GenericErrorResp}
+  alias GeoLocationWeb.Controllers.Schemas.{GeoLocation, GenericErrorResp, ErrorsResp}
+  alias GeoLocationWeb.Validator
 
+  # this plug doesn't work
   plug OpenApiSpex.Plug.CastAndValidate, render_error: GeoLocation.RenderError
 
   def open_api_operation(action) do
@@ -19,7 +23,7 @@ defmodule GeoLocationWeb.GeoLocationController do
         Operation.parameter(
           :ip,
           :path,
-          %Schema{type: :integer},
+          %Schema{type: :string, format: :ipv4},
           "IP Address to get GeoLocation data for",
           required: true
         )
@@ -39,35 +43,49 @@ defmodule GeoLocationWeb.GeoLocationController do
   end
 
   def get_by_ip(conn, params) do
-    params |> IO.inspect(label: "params")
+    # do addtional validation here if needed
+    case Map.get(params, :ip) |> Validator.validate(:ip) do
+      {:ok, ip} ->
+        case Storage.get_by_ip(ip) do
+          nil ->
+            conn
+            |> put_status(404)
+            |> json(%{errors: ["Not Found"]})
 
-    case Storage.get_by_ip("123") do
-      {:ok, geo_location} ->
-        conn
-        |> put_status(:ok)
-        |> json(%{geo_location: geo_location})
+          geo_location ->
+            conn
+            |> put_status(200)
+            |> json(geo_location_mapper(geo_location))
+        end
 
-      [] ->
+      {:error, reason} ->
         conn
-        |> put_status(404)
-        |> json(%{errors: ["Not Found"]})
-
-      _ ->
-        conn
-        |> put_status(500)
-        |> render("error.json", message: "Not Found")
+        |> put_status(400)
+        |> json(%{errors: [reason]})
     end
   end
-end
 
-defmodule GeoLocation.RenderError do
-  def init(opts), do: opts
+  defp geo_location_mapper(geo),
+    do: %{
+      ip: Map.get(geo, :ip),
+      country_code: Map.get(geo, :country_code),
+      country: Map.get(geo, :country),
+      city: Map.get(geo, :city),
+      latitude: Map.get(geo, :latitude),
+      longitude: Map.get(geo, :longitude),
+      inserted_at: Map.get(geo, :inserted_at),
+      updated_at: Map.get(geo, :updated_at)
+    }
 
-  def call(conn, reason) do
-    msg = Jason.encode!(%{error: reason})
+  defmodule GeoLocation.RenderError do
+    def init(opts), do: opts
 
-    conn
-    |> Conn.put_resp_content_type("application/json")
-    |> Conn.send_resp(400, msg)
+    def call(conn, reason) do
+      msg = Jason.encode!(%{error: reason})
+
+      conn
+      |> Conn.put_resp_content_type("application/json")
+      |> Conn.send_resp(400, msg)
+    end
   end
 end

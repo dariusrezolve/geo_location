@@ -2,7 +2,6 @@ defmodule GeoLocation.Importer do
   alias NimbleCSV.RFC4180, as: CSV
   alias GeoLocation.GeoLocationSchema, as: CsvGeoLocation
   alias GeoLocation.StorageApi, as: Storage
-  alias GeoLocation.Storage.GeoLocation
 
   def import data_stream do
     {time_microsec, result} = :timer.tc(fn -> do_import(data_stream) end)
@@ -20,7 +19,7 @@ defmodule GeoLocation.Importer do
     |> Flow.reduce(fn -> reset_acc() end, fn row, acc ->
       partition_rows_by_validity(row, acc.valid, acc.invalid)
     end)
-    |> Flow.on_trigger(fn %{valid: valid, invalid: invalid}, index, _window ->
+    |> Flow.on_trigger(fn %{valid: valid, invalid: invalid}, _index, _window ->
       # we can add additional error checking here and add the rows that failed to import to the invalid list
       insert_into_db(valid)
 
@@ -64,7 +63,7 @@ defmodule GeoLocation.Importer do
 
   ###
   # partition rows into valid and invalid
-  defp partition_rows_by_validity(row, valid \\ [], invalid \\ []) do
+  defp partition_rows_by_validity(row, valid, invalid) do
     csvChangeset = CsvGeoLocation.changeset(%CsvGeoLocation{}, row)
 
     case csvChangeset.valid?() do

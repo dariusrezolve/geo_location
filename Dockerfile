@@ -9,9 +9,10 @@ RUN apt-get update && \
     mix local.rebar --force
 
 
-    ENV APP_HOME /app
-    RUN mkdir -p $APP_HOME
-    WORKDIR $APP_HOME
+ENV APP_HOME /app
+RUN mkdir -p $APP_HOME
+WORKDIR $APP_HOME
 
-    EXPOSE 4000
+EXPOSE 4000
 
+CMD ["/app/entrypoint.sh"]

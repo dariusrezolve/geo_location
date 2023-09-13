@@ -6,8 +6,7 @@ defmodule GeoLocation.Storage do
   def get_by_ip(ip) do
     GeoLocation
     |> where([g], g.ip == ^ip)
-    |> Repo.all()
-    |> IO.inspect()
+    |> Repo.one()
   end
 
   def insert_batch(rows) do
