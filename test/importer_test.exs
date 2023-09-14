@@ -6,6 +6,8 @@ defmodule GeoLocation.ImporterTest do
   alias GeoLocation.Importer
   import Mox
 
+  setup :set_mox_global
+
   setup do
     Application.put_env(:geo_location, :storage_api, GeoLocation.Storage)
     :ok
