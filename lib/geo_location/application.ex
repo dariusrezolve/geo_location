@@ -17,9 +17,11 @@ defmodule GeoLocation.Application do
       # Start Finch
       {Finch, name: GeoLocation.Finch},
       # Start the Endpoint (http/https)
-      GeoLocationWeb.Endpoint
+      GeoLocationWeb.Endpoint,
       # Start a worker by calling: GeoLocation.Worker.start_link(arg)
       # {GeoLocation.Worker, arg}
+      {Task.Supervisor, name: GeoLocation.TaskSupervisor},
+      {GeoLocation.Importer, name: GeoLocation.Importer}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

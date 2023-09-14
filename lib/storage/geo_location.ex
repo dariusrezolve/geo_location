@@ -16,7 +16,7 @@ defmodule GeoLocation.Storage.GeoLocation do
 
   @fields ~w(city country country_code ip latitude longitude mystery_value inserted_at updated_at)a
 
-  schema "geo_location" do
+  schema "geo_locations" do
     field :city, :string
     field :country, :string
     field :country_code, :string

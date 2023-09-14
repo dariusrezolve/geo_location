@@ -2,7 +2,7 @@ defmodule GeoLocation.Repo.Migrations.CreateGeoLocation do
   use Ecto.Migration
 
   def change do
-    create table(:geo_location) do
+    create table(:geo_locations) do
       add :ip, :string
       add :country_code, :string
       add :country, :string
@@ -13,6 +13,6 @@ defmodule GeoLocation.Repo.Migrations.CreateGeoLocation do
       timestamps()
     end
 
-    create index(:geo_location, [:ip], name: :index_geo_location_on_ip, unique: true)
+    create index(:geo_locations, [:ip], name: :index_geo_location_on_ip, unique: true)
   end
 end

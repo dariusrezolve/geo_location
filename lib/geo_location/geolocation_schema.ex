@@ -27,7 +27,7 @@ defmodule GeoLocation.GeoLocationSchema do
     ])
     |> validate_length(:ip, min: 7, max: 15)
     |> validate_length(:country_code, min: 2, max: 2)
-    |> validate_length(:country, min: 2, max: 50)
+    |> validate_length(:country, min: 2, max: 100)
     |> custom_validation(:ip)
   end
 

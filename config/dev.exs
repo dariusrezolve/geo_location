@@ -80,4 +80,4 @@ config :phoenix, :plug_init_mode, :runtime
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
 
-config :geo_location, :batch_size, System.get_env("DB_BATCH_SIZE") || 10_000
+config :geo_location, :batch_size, System.get_env("DB_BATCH_SIZE") || 5000
